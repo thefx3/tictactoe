@@ -84,10 +84,26 @@ const GameController = (player1Name = "Player One", player2Name = "Player Two") 
     console.log(`${getActivePlayer().name}'s turn.`);
   };
 
+  const checkVictory = () => {
+    // [0][1][2] [3][4][5] [6][7][8]
+    // [3][4][5]
+    // [6][7][8]
+
+    //In line
+    if ((Gameboard.getBoard()[1] != "")&&
+       (Gameboard.getBoard()[1]=== Gameboard.getBoard()[4] && Gameboard.getBoard()[4] === Gameboard.getBoard()[7])){
+        console.log(`${getActivePlayer().name} win the game`);
+        return true;
+    }
+    return false;
+  }
+
   const playRound = (index) => {
     console.log(`Dropping ${getActivePlayer().name}'s token into position ${index}....`);
     Gameboard.putMarker(index, getActivePlayer().symbole);
-
+    if(checkVictory()) {
+      return;
+    };
     switchPlayerTurn();
     printNewRound();
   }
@@ -101,7 +117,7 @@ const GameController = (player1Name = "Player One", player2Name = "Player Two") 
     console.log(`The active player is ${getActivePlayer().name}`);
   };
 
-  return {getActivePlayer, playRound, printPlayers};
+  return {checkVictory, getActivePlayer, playRound, printPlayers};
 };
 
 
@@ -109,12 +125,15 @@ const GameController = (player1Name = "Player One", player2Name = "Player Two") 
 //Display the UI without modifying the Gameboard()
 const displayController = (function () {
 
+
 });
 
 const game = GameController("Bob", "Alice");
 game.printPlayers();
+game.playRound(1);
+game.playRound(2);
 game.playRound(4);
-game.playRound(5);
-game.playRound(8);
+  game.playRound(3);
+game.playRound(7);
 
 Gameboard.printBoard();
