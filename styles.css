@@ -5,13 +5,19 @@
     font-family: "Roboto", "Arial";
 }
 
+html, body {
+    background-color: rgb(154, 240, 255);
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
 
 #gameBoard {
     border: 3px solid darkred;
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     grid-template-columns: repeat(3, 1fr);
-    margin-top: 15px;
+    margin: 1rem;
     height: 300px;
     width: 300px;
     aspect-ratio: 1 / 1;
@@ -26,6 +32,19 @@
     width: 100%;
     background-color: rgb(0, 165, 137);
     height: 80px;
+}
+
+.copyright {
+    display: flex;
+    background-color: #1F2937;
+    color: #F9FAF8;
+    width: 100%;
+    padding : 40px 20% 40px 20%;
+
+    margin-top: auto;
+    text-align: center;
+    justify-content: center;
+    align-items: center;
 }
 
 .cell {
@@ -43,9 +62,64 @@
 }
 
 .cell[data-sym = "X"]{
-    background-color: rgb(255, 189, 189);
+    background-color: rgb(255, 85, 85);
 }
 
 .cell[data-sym = "O"]{
-    background-color: rgb(189, 189, 255);
+    background-color: rgb(85, 130, 255);
+}
+
+.taken{
+    color: white;
+}
+
+.status {
+    text-align: center;
+    font-size: 2rem;
+    margin-bottom: 1rem;
+}
+
+#resetButton {
+    display: flex;
+    appearance: none;
+    font-size: 1rem;
+    justify-content: center;
+    text-align: center;
+    align-self: center;
+    width: 150px;
+    border: 2px solid rgb(255, 255, 255);
+    color : white;
+    font-weight: bold;
+    background-color: rgb(0, 155, 129);
+    padding: 1rem 2.5rem;
+}
+
+#resetButton:hover {
+    appearance: none;
+    border: 2px solid rgb(255, 255, 255);
+    background-color: rgb(0, 180, 150);
+    transform: scale(0.98);
+}
+
+.container {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    justify-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 1rem 0;
+ 
+}
+
+.player1, .player2 {
+    padding: 15px 0;
+    font-size: 1.5rem;
+}
+
+.player1 {
+    justify-self: flex-end;
+}
+
+.player2 {
+    justify-self: flex-start;
 }

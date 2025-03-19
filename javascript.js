@@ -102,13 +102,29 @@ const GameController = (player1Name = "Player One", player2Name = "Player Two") 
     return false; // No victory
   };
 
+  const checkDraw = () => {
+    let count = 0;
+    for (let i = 0; i<9; i++){
+      if (Gameboard.getBoard()[i] !== ""){
+        count = count + 1;
+      }
+      if (count === 9){ 
+        // console.log(`It's a draw !`);
+        return true;}
+    }
+    return false; 
+  }
+
   const playRound = (index) => {
     console.log(`Dropping ${getActivePlayer().name}'s token into position ${index}....`); //CONSOLE
     Gameboard.putMarker(index, getActivePlayer().symbole);
     Gameboard.printBoard(); // CONSOLE
-    if(checkVictory(Gameboard.getBoard())) {
+    if(checkVictory()) {
       return;
     };
+    if(checkDraw()) {
+      return;
+    }
     switchPlayerTurn();
     printNewRound();
   }
@@ -122,7 +138,7 @@ const GameController = (player1Name = "Player One", player2Name = "Player Two") 
     console.log(`The active player is ${getActivePlayer().name}`);
   };
 
-  return {checkVictory, getActivePlayer, playRound, printPlayers};
+  return {checkVictory, checkDraw, getActivePlayer, playRound, players, printPlayers};
 };
 
 
@@ -133,6 +149,9 @@ const displayController = (function () {
     const status = document.querySelector(".status");
     const boardContainer = document.getElementById("gameBoard")
     const resetButton = document.getElementById("resetButton");
+    const player1Display = document.querySelector(".player1");
+    const player2Display = document.querySelector(".player2");
+
 
     //Create function in the DOM
     function createBoard() {
@@ -151,6 +170,10 @@ const displayController = (function () {
 
         boardContainer.appendChild(cellDiv);
       });
+
+
+      player1Display.textContent = game.players[0].name;
+      player2Display.textContent = game.players[1].name;
     }
 
 
@@ -171,20 +194,27 @@ const displayController = (function () {
         cell.textContent = Gameboard.getBoard()[index];
         cell.dataset.sym = cell.textContent;
         cell.classList.toggle("taken", Gameboard.getBoard()[index] !== "");
+
       });
 
     if (game.checkVictory()) {
       console.log(`${game.getActivePlayer().name} wins !`);
-      status.textContent = `${game.getActivePlayer().name} a gagné ! 🎉`;
+      status.textContent = `${game.getActivePlayer().name} wins ! 🎉`;
       Gameboard.resetBoard();
 
       //Display and highlight the grid position's winner
-      //Reset the Game
       //Update the Score
       return;
     }
 
-    status.textContent = `Tour de : ${game.getActivePlayer().name}`;
+    if (game.checkDraw()) {
+      console.log(`It's a draw !`);
+      status.textContent = `It's a draw !`;
+      Gameboard.resetBoard();
+      return;
+    }
+
+    status.textContent = `Turn : ${game.getActivePlayer().name}`;
   }
 
     // Reset the game
@@ -194,7 +224,6 @@ const displayController = (function () {
     });
 
     createBoard(); // Create the grid
-
 
     return { updateDisplay };
 
