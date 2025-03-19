@@ -85,23 +85,28 @@ const GameController = (player1Name = "Player One", player2Name = "Player Two") 
   };
 
   const checkVictory = () => {
-    // [0][1][2] [3][4][5] [6][7][8]
-    // [3][4][5]
-    // [6][7][8]
-
-    //In line
-    if ((Gameboard.getBoard()[1] != "")&&
-       (Gameboard.getBoard()[1]=== Gameboard.getBoard()[4] && Gameboard.getBoard()[4] === Gameboard.getBoard()[7])){
-        console.log(`${getActivePlayer().name} win the game`);
-        return true;
+    const winningCombinations = [
+      [0, 1, 2], [3, 4, 5], [6, 7, 8], // Lines
+      [0, 3, 6], [1, 4, 7], [2, 5, 8], // Columns
+      [0, 4, 8], [2, 4, 6]             //Diagonal
+    ];
+  
+    for (let combination of winningCombinations) {
+      const [a, b, c] = combination;
+      if (Gameboard.getBoard()[a] !== "" && Gameboard.getBoard()[a] === Gameboard.getBoard()[b] && Gameboard.getBoard()[b] === Gameboard.getBoard()[c]) {
+        // console.log(`${getActivePlayer().name} wins !`);
+        return true; // Return if win
+      }
     }
-    return false;
-  }
+  
+    return false; // No victory
+  };
 
   const playRound = (index) => {
-    console.log(`Dropping ${getActivePlayer().name}'s token into position ${index}....`);
+    console.log(`Dropping ${getActivePlayer().name}'s token into position ${index}....`); //CONSOLE
     Gameboard.putMarker(index, getActivePlayer().symbole);
-    if(checkVictory()) {
+    Gameboard.printBoard(); // CONSOLE
+    if(checkVictory(Gameboard.getBoard())) {
       return;
     };
     switchPlayerTurn();
@@ -124,16 +129,75 @@ const GameController = (player1Name = "Player One", player2Name = "Player Two") 
 
 //Display the UI without modifying the Gameboard()
 const displayController = (function () {
+    const game = GameController();
+    const status = document.querySelector(".status");
+    const boardContainer = document.getElementById("gameBoard")
+    const resetButton = document.getElementById("resetButton");
 
+    //Create function in the DOM
+    function createBoard() {
+      boardContainer.innerHTML = "";
+
+      Gameboard.getBoard().forEach((cell, index) => {
+        const cellDiv = document.createElement("div");
+        cellDiv.classList.add("cell");
+        cellDiv.dataset.index = index; //Store the index in each cell for click event
+        
+        cellDiv.textContent = cell; 
+
+        cellDiv.dataset.sym = cell; //Store the symbol of each cell for CSS
+
+        cellDiv.addEventListener("click",putMarkerClick);
+
+        boardContainer.appendChild(cellDiv);
+      });
+    }
+
+
+    //Event on click to put Marker
+    function putMarkerClick(event) {
+      const index = event.target.dataset.index; //Retrieve the dataset-index the cell
+
+      if (Gameboard.getBoard()[index] !=="") return;
+
+      game.playRound(index);
+      updateDisplay();
+    }
+
+    function updateDisplay() {
+      const cells = document.querySelectorAll(".cell");
+
+      cells.forEach((cell, index) => {
+        cell.textContent = Gameboard.getBoard()[index];
+        cell.dataset.sym = cell.textContent;
+        cell.classList.toggle("taken", Gameboard.getBoard()[index] !== "");
+      });
+
+    if (game.checkVictory()) {
+      console.log(`${game.getActivePlayer().name} wins !`);
+      status.textContent = `${game.getActivePlayer().name} a gagné ! 🎉`;
+      Gameboard.resetBoard();
+
+      //Display and highlight the grid position's winner
+      //Reset the Game
+      //Update the Score
+      return;
+    }
+
+    status.textContent = `Tour de : ${game.getActivePlayer().name}`;
+  }
+
+    // Reset the game
+    resetButton.addEventListener("click", () => {
+      Gameboard.resetBoard();
+      updateDisplay();
+    });
+
+    createBoard(); // Create the grid
+
+
+    return { updateDisplay };
 
 });
 
-const game = GameController("Bob", "Alice");
-game.printPlayers();
-game.playRound(1);
-game.playRound(2);
-game.playRound(4);
-  game.playRound(3);
-game.playRound(7);
-
-Gameboard.printBoard();
+displayController().updateDisplay();
