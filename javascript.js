@@ -115,6 +115,12 @@ const GameController = (player1Name = "Player One", player2Name = "Player Two") 
     return false; 
   }
 
+  const changePlayerName = (index, newName) => {
+    if (index=== 0 || index === 1) {
+      players[index].name = newName; 
+    }
+  };
+
   const playRound = (index) => {
     console.log(`Dropping ${getActivePlayer().name}'s token into position ${index}....`); //CONSOLE
     Gameboard.putMarker(index, getActivePlayer().symbole);
@@ -138,7 +144,7 @@ const GameController = (player1Name = "Player One", player2Name = "Player Two") 
     console.log(`The active player is ${getActivePlayer().name}`);
   };
 
-  return {checkVictory, checkDraw, getActivePlayer, playRound, players, printPlayers};
+  return {checkVictory, checkDraw, getActivePlayer, changePlayerName, playRound, players, printPlayers};
 };
 
 
@@ -151,6 +157,61 @@ const displayController = (function () {
     const resetButton = document.getElementById("resetButton");
     const player1Display = document.querySelector(".player1");
     const player2Display = document.querySelector(".player2");
+
+    const editIcon1 = document.querySelector(".p1");
+    const editIcon2 = document.querySelector(".p2");
+
+    const confirmButton1 = document.querySelector(".confirm-icon-p1");
+    const confirmButton2 = document.querySelector(".confirm-icon-p2");
+
+
+
+    function enableEdit(playerDiv, playerIndex, confirmButton, editIcon) {
+      let oldName = playerDiv.textContent;
+
+      const input = document.createElement('input');
+      input.type = "text";
+      input.value = oldName;
+      input.classList.add("edit-input");
+
+      playerDiv.innerHTML = "";
+      playerDiv.appendChild(input);
+      
+      input.focus();
+
+      editIcon.classList.add("hidden");
+      confirmButton.classList.remove("hidden");
+
+      confirmButton.addEventListener("click", () => {
+
+        const newName = input.value.trim()|| oldName;
+        game.changePlayerName(playerIndex, newName);
+
+        playerDiv.textContent = newName;
+
+        confirmButton.classList.add("hidden");
+        editIcon.classList.remove("hidden");
+        
+        updateUI();
+        
+      }); 
+    }
+
+    player1Display.addEventListener("click", () => {
+      enableEdit(player1Display, 0, confirmButton1, editIcon1);
+    });
+  
+    player2Display.addEventListener("click", () => {
+      enableEdit(player2Display, 1, confirmButton2, editIcon2);
+    });
+  
+    function updateUI() {
+
+      player1Display.textContent = game.players[0].name;
+      player2Display.textContent = game.players[1].name;
+      status.textContent = `Turn : ${game.getActivePlayer().name}`;
+      
+    }
 
 
     //Create function in the DOM
@@ -171,9 +232,9 @@ const displayController = (function () {
         boardContainer.appendChild(cellDiv);
       });
 
-
       player1Display.textContent = game.players[0].name;
       player2Display.textContent = game.players[1].name;
+
     }
 
 
@@ -188,6 +249,7 @@ const displayController = (function () {
     }
 
     function updateDisplay() {
+
       const cells = document.querySelectorAll(".cell");
 
       cells.forEach((cell, index) => {

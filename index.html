@@ -15,19 +15,36 @@
 
     <div class="container">
 
-        <div class ="player1">
-            <div class ="score1">Score :</div>
+        <div class="player-container">
+            <div class="edit-player1">
+                <div class ="player1"></div>
+                <img src="pencil.svg" alt="Edit icon" width="30" height="30" class ="p1"></img>
+                <img src="check.svg" alt="Confirm icon" width="30" height="30" class="confirm-icon-p1 hidden">
+                <img src="close.svg" alt="Cancel icon" width="30" height="30" class="cancel-icon-p1 hidden">
+            </div>
+            <div class ="score">Score :</div>
         </div>
 
         <div class="grid" id="gameBoard"></div>
-        <div class = "player2">
-            <div class ="score2">Score :</div>
+
+        <div class="player-container">
+            <div class="edit-player2">
+                <div class ="player2"></div>
+                <img src="pencil.svg" alt="Edit icon" width="30" height="30" class ="p2"></img>
+                <img src="check.svg" alt="Confirm icon" width="30" height="30" class="confirm-icon-p2 hidden">
+                <img src="close.svg" alt="Cancel icon" width="30" height="30" class="cancel-icon-p2 hidden">
+            </div>
+            <div class ="score">Score :</div>
+        </div>
+
+        <div class="small-container">
+            <div class="status"></div>
+            <button id="resetButton">RESET</button>
         </div>
 
     </div>
 
-    <div class="status"></div>
-    <button id="resetButton">RESET</button>
+
 
     <div class = "copyright">
     <div id ="copyright">Copyright © thefx3 - The Odin Project 2025 </div>

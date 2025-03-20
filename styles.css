@@ -17,19 +17,20 @@ html, body {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     grid-template-columns: repeat(3, 1fr);
-    margin: 1rem;
+    margin: 1rem 1rem 1.5rem 1rem;
     height: 300px;
     width: 300px;
     aspect-ratio: 1 / 1;
     align-self: center;
     justify-self: center;
+    flex: 1;
 }
 
 .tictactoe {
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 100%;
+    width: auto;
     background-color: rgb(0, 165, 137);
     height: 80px;
 }
@@ -73,6 +74,59 @@ html, body {
     color: white;
 }
 
+.container {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    justify-items: center;
+    justify-content: center;
+    align-self: center;
+    text-align: center;
+    padding: 2rem 0;
+
+    max-width: 1000px;
+
+}
+
+.score {
+    margin-top: 50px;
+
+}
+
+.edit-player1 {
+    display: flex;
+    flex-direction: row;
+    gap : 25px;
+    justify-content: center;
+    align-items: center;
+}
+
+.edit-player2 {
+    display: flex;
+    flex-direction: row-reverse;
+    gap : 25px;
+    justify-content: center;
+    align-items: center;
+}
+
+.player1, .player2 {
+    padding: 15px 0;
+    font-size: 1.5rem;
+
+}
+
+.player1 {
+    justify-self: flex-end;
+}
+
+.player2 {
+    justify-self: flex-start;
+}
+
+.small-container {
+    grid-column: 1 / span 3;
+    justify-items: center;
+
+}
 .status {
     text-align: center;
     font-size: 2rem;
@@ -92,6 +146,7 @@ html, body {
     font-weight: bold;
     background-color: rgb(0, 155, 129);
     padding: 1rem 2.5rem;
+    cursor: pointer;
 }
 
 #resetButton:hover {
@@ -101,25 +156,18 @@ html, body {
     transform: scale(0.98);
 }
 
-.container {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    justify-items: center;
-    justify-content: center;
-    text-align: center;
-    padding: 1rem 0;
- 
+.edit-input {
+    appearance: none;
+    border: 1px grey;
+    font-size: 1rem;
+    width: 150px;
+    height: 1.5rem;
 }
 
-.player1, .player2 {
-    padding: 15px 0;
-    font-size: 1.5rem;
+.edit-input:focus {
+    border: 1px solid grey;
 }
 
-.player1 {
-    justify-self: flex-end;
-}
-
-.player2 {
-    justify-self: flex-start;
+.hidden {
+    display : none;
 }
