@@ -24,6 +24,8 @@ html, body {
     align-self: center;
     justify-self: center;
     flex: 1;
+
+    box-shadow: 1px 1px 15px 2px darkblue;
 }
 
 .tictactoe {
@@ -59,7 +61,7 @@ html, body {
 }
 
 .cell:hover {
-    background-color: blanchedalmond;
+    background-color:rgba(0, 0, 139, 0.308);
 }
 
 .cell[data-sym = "X"]{
@@ -154,20 +156,25 @@ html, body {
     border: 2px solid rgb(255, 255, 255);
     background-color: rgb(0, 180, 150);
     transform: scale(0.98);
+
 }
 
 .edit-input {
     appearance: none;
     border: 1px grey;
-    font-size: 1rem;
+    font-size: 1.25rem;
     width: 150px;
     height: 1.5rem;
 }
 
 .edit-input:focus {
-    border: 1px solid grey;
+    border: 1px solid darkblue;
 }
 
 .hidden {
     display : none;
+}
+
+.score {
+    font-size: 3rem;
 }

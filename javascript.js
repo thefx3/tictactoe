@@ -56,12 +56,12 @@ const Gameboard = (function () {
 // FACTORY FUNCTION - Possibility to create multiple players
 const GameController = (player1Name = "Player One", player2Name = "Player Two") => {
 
-  const createPlayer = (name, symbole) => {
-    return {name, symbole};
+  const createPlayer = (name, symbole, score) => {
+    return {name, symbole, score};
   };
 
-  const player1 = createPlayer(player1Name,"X");
-  const player2 = createPlayer(player2Name,"O");
+  const player1 = createPlayer(player1Name,"X", 0);
+  const player2 = createPlayer(player2Name,"O", 0);
 
   const players = [player1, player2];
 
@@ -98,7 +98,6 @@ const GameController = (player1Name = "Player One", player2Name = "Player Two") 
         return true; // Return if win
       }
     }
-  
     return false; // No victory
   };
 
@@ -120,6 +119,14 @@ const GameController = (player1Name = "Player One", player2Name = "Player Two") 
       players[index].name = newName; 
     }
   };
+
+  function increaseScore(winner) {
+    winner.score++;
+  }
+
+  function resetScores() {
+    players.forEach(player => player.score = 0);
+  }
 
   const playRound = (index) => {
     console.log(`Dropping ${getActivePlayer().name}'s token into position ${index}....`); //CONSOLE
@@ -144,7 +151,7 @@ const GameController = (player1Name = "Player One", player2Name = "Player Two") 
     console.log(`The active player is ${getActivePlayer().name}`);
   };
 
-  return {checkVictory, checkDraw, getActivePlayer, changePlayerName, playRound, players, printPlayers};
+  return {checkVictory, checkDraw, increaseScore, resetScores, getActivePlayer, changePlayerName, playRound, players, printPlayers};
 };
 
 
@@ -172,6 +179,8 @@ const displayController = (function () {
       const input = document.createElement('input');
       input.type = "text";
       input.value = oldName;
+      input.required = true;
+      input.minLength = 2;
       input.classList.add("edit-input");
 
       playerDiv.innerHTML = "";
@@ -184,7 +193,7 @@ const displayController = (function () {
 
       confirmButton.addEventListener("click", () => {
 
-        const newName = input.value.trim()|| oldName;
+        const newName = input.value.trim() || oldName;
         game.changePlayerName(playerIndex, newName);
 
         playerDiv.textContent = newName;
@@ -259,15 +268,24 @@ const displayController = (function () {
 
       });
 
-    if (game.checkVictory()) {
-      console.log(`${game.getActivePlayer().name} wins !`);
-      status.textContent = `${game.getActivePlayer().name} wins ! 🎉`;
-      Gameboard.resetBoard();
+      function updateScoreUI() {
+        document.getElementById("score1").textContent = game.players[0].score;
+        document.getElementById("score2").textContent = game.players[1].score;
+      }
 
-      //Display and highlight the grid position's winner
-      //Update the Score
-      return;
-    }
+      if (game.checkVictory()) {
+        game.increaseScore(game.getActivePlayer());
+        updateScoreUI();
+        console.log(`${game.getActivePlayer().name} wins !`);
+        status.textContent = `${game.getActivePlayer().name} wins ! 🎉`;
+        Gameboard.resetBoard();
+
+        //Display and highlight the grid position's winner
+        //Update the Score
+        return;
+      }
+
+    
 
     if (game.checkDraw()) {
       console.log(`It's a draw !`);
@@ -281,7 +299,11 @@ const displayController = (function () {
 
     // Reset the game
     resetButton.addEventListener("click", () => {
+      game.resetScores();
+      document.getElementById("score1").textContent = 0;
+      document.getElementById("score2").textContent = 0;
       Gameboard.resetBoard();
+      
       updateDisplay();
     });
 
