@@ -196,5 +196,6 @@ html, body {
 }
 
 .taken.victory {
+    text-shadow: 1px 1px 10px yellow;
     color : darkblue;
 }
