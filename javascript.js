@@ -114,6 +114,22 @@ const GameController = (player1Name = "Player One", player2Name = "Player Two") 
     return false; 
   }
 
+  const highlightVictory = () => {
+    const winningCombinations = [
+      [0, 1, 2], [3, 4, 5], [6, 7, 8], // Lines
+      [0, 3, 6], [1, 4, 7], [2, 5, 8], // Columns
+      [0, 4, 8], [2, 4, 6]             //Diagonal
+    ];
+  
+    for (let combination of winningCombinations) {
+      const [a, b, c] = combination;
+      if (Gameboard.getBoard()[a] !== "" && Gameboard.getBoard()[a] === Gameboard.getBoard()[b] && Gameboard.getBoard()[b] === Gameboard.getBoard()[c]) {
+        return combination;
+      }
+    }
+    return false;
+  };
+
   const changePlayerName = (index, newName) => {
     if (index=== 0 || index === 1) {
       players[index].name = newName; 
@@ -151,7 +167,7 @@ const GameController = (player1Name = "Player One", player2Name = "Player Two") 
     console.log(`The active player is ${getActivePlayer().name}`);
   };
 
-  return {checkVictory, checkDraw, increaseScore, resetScores, getActivePlayer, changePlayerName, playRound, players, printPlayers};
+  return {checkVictory, checkDraw, highlightVictory, increaseScore, resetScores, getActivePlayer, changePlayerName, playRound, players, printPlayers};
 };
 
 
@@ -179,8 +195,6 @@ const displayController = (function () {
       const input = document.createElement('input');
       input.type = "text";
       input.value = oldName;
-      input.required = true;
-      input.minLength = 2;
       input.classList.add("edit-input");
 
       playerDiv.innerHTML = "";
@@ -192,8 +206,10 @@ const displayController = (function () {
       confirmButton.classList.remove("hidden");
 
       confirmButton.addEventListener("click", () => {
-
-        const newName = input.value.trim() || oldName;
+        let newName = oldName;
+        if (input.value !== ""){
+          newName = input.value.trim();
+        }
         game.changePlayerName(playerIndex, newName);
 
         playerDiv.textContent = newName;
@@ -206,11 +222,11 @@ const displayController = (function () {
       }); 
     }
 
-    player1Display.addEventListener("click", () => {
+    editIcon1.addEventListener("click", () => {
       enableEdit(player1Display, 0, confirmButton1, editIcon1);
     });
   
-    player2Display.addEventListener("click", () => {
+    editIcon2.addEventListener("click", () => {
       enableEdit(player2Display, 1, confirmButton2, editIcon2);
     });
   
@@ -265,6 +281,7 @@ const displayController = (function () {
         cell.textContent = Gameboard.getBoard()[index];
         cell.dataset.sym = cell.textContent;
         cell.classList.toggle("taken", Gameboard.getBoard()[index] !== "");
+        cell.classList.remove("victory");
 
       });
 
@@ -278,14 +295,16 @@ const displayController = (function () {
         updateScoreUI();
         console.log(`${game.getActivePlayer().name} wins !`);
         status.textContent = `${game.getActivePlayer().name} wins ! 🎉`;
+        cells.forEach((cell, index) => {
+          if (index === game.highlightVictory()[0] || index === game.highlightVictory()[1] || index === game.highlightVictory()[2]) {
+          cell.classList.toggle("victory", Gameboard.getBoard()[index] !== "");
+          }
+        });
+        
         Gameboard.resetBoard();
 
-        //Display and highlight the grid position's winner
-        //Update the Score
         return;
       }
-
-    
 
     if (game.checkDraw()) {
       console.log(`It's a draw !`);
@@ -300,6 +319,10 @@ const displayController = (function () {
     // Reset the game
     resetButton.addEventListener("click", () => {
       game.resetScores();
+      game.changePlayerName(0, "Player One"); // Reset Names in Game Controller
+      game.changePlayerName(1, "Player Two"); // Reset Names in Game Controller
+      player1Display.textContent = game.players[0].name; // Update in the DOM
+      player2Display.textContent = game.players[1].name; // Update in the DOM
       document.getElementById("score1").textContent = 0;
       document.getElementById("score2").textContent = 0;
       Gameboard.resetBoard();

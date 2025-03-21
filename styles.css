@@ -5,6 +5,12 @@
     font-family: "Roboto", "Arial";
 }
 
+:root {
+    --playerone-color : rgb(255, 85, 85);
+    --playertwo-color : rgb(85, 130, 255);
+    --theme-color : rgb(0, 165, 137);
+}
+
 html, body {
     background-color: rgb(154, 240, 255);
     height: 100%;
@@ -17,7 +23,7 @@ html, body {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     grid-template-columns: repeat(3, 1fr);
-    margin: 1rem 1rem 1.5rem 1rem;
+    margin: 1rem 1rem 2.5rem 1rem;
     height: 300px;
     width: 300px;
     aspect-ratio: 1 / 1;
@@ -33,8 +39,9 @@ html, body {
     justify-content: center;
     align-items: center;
     width: auto;
-    background-color: rgb(0, 165, 137);
+    background-color: var(--theme-color);
     height: 80px;
+    font-size: 2rem;
 }
 
 .copyright {
@@ -61,15 +68,15 @@ html, body {
 }
 
 .cell:hover {
-    background-color:rgba(0, 0, 139, 0.308);
+    background-color:rgba(0, 0, 139, 0.192);
 }
 
 .cell[data-sym = "X"]{
-    background-color: rgb(255, 85, 85);
+    background-color: var(--playerone-color);
 }
 
 .cell[data-sym = "O"]{
-    background-color: rgb(85, 130, 255);
+    background-color: var(--playertwo-color);
 }
 
 .taken{
@@ -100,6 +107,8 @@ html, body {
     gap : 25px;
     justify-content: center;
     align-items: center;
+    justify-items: center;
+    align-content: center;
 }
 
 .edit-player2 {
@@ -108,6 +117,8 @@ html, body {
     gap : 25px;
     justify-content: center;
     align-items: center;
+    justify-items: center;
+    align-content: center;
 }
 
 .player1, .player2 {
@@ -117,10 +128,14 @@ html, body {
 }
 
 .player1 {
+    font-weight: bold;
+    color : var(--playerone-color);
     justify-self: flex-end;
 }
 
 .player2 {
+    font-weight: bold;
+    color : var(--playertwo-color);
     justify-self: flex-start;
 }
 
@@ -132,7 +147,7 @@ html, body {
 .status {
     text-align: center;
     font-size: 2rem;
-    margin-bottom: 1rem;
+    margin-bottom: 2rem;
 }
 
 #resetButton {
@@ -146,7 +161,7 @@ html, body {
     border: 2px solid rgb(255, 255, 255);
     color : white;
     font-weight: bold;
-    background-color: rgb(0, 155, 129);
+    background-color: var(--theme-color);
     padding: 1rem 2.5rem;
     cursor: pointer;
 }
@@ -165,6 +180,7 @@ html, body {
     font-size: 1.25rem;
     width: 150px;
     height: 1.5rem;
+    padding: 15px 5px;
 }
 
 .edit-input:focus {
@@ -177,4 +193,8 @@ html, body {
 
 .score {
     font-size: 3rem;
+}
+
+.taken.victory {
+    color : darkblue;
 }
