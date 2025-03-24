@@ -3,40 +3,29 @@
 // Gameboard IIFE Function - Unique and non reusable
 const Gameboard = (function () {
 
-  //To count INDEX from 0 to 9
   let board = ["" , "", "",
                "" , "", "",
                "" , "", ""]
 
-  //This board will be modified with the GameController with the other functions
-  //inside of Gameboard();
-
-  //FUNCTION 1 - Access to the board from another function
   const getBoard = () => board; 
 
 
-  //FUNCTION 2
-  const putMarker = (index, symbole) => {
-    //Check the avaibility of the space in the grid
-    //And where the maker can be put
-    //And which player put the marker
-
-    //If cell is empty, 
+  const putMarker = (index, symbol) => {
     if (board[index] === "") {
-      board[index] = symbole;
+      board[index] = symbol;
     } else {
       console.log('This case is already taken');
     }
   };
 
-  //FUNCTION 3 - Reset the entire board
+
   const resetBoard = () => {
     board = ["" , "", "",
              "" , "", "",
              "" , "", ""]
   }
 
-  //FUNCTION 4 - to display in the console - no use after the displayController
+
   const printBoard = () => {
     for (let i = 0; i<7; i++){
       console.log(board[i] + " | " + board[i+1] + " | "+ board[i+2] + " | ");
@@ -52,36 +41,65 @@ const Gameboard = (function () {
 
 })();
 
-//Logic of the Game : turns, victory
-// FACTORY FUNCTION - Possibility to create multiple players
+
 const GameController = (player1Name = "Player One", player2Name = "Player Two") => {
 
-  const createPlayer = (name, symbole, score) => {
-    return {name, symbole, score};
-  };
+//CLASS PLAYER
+  class Player {
+    #score = 0;
 
-  const player1 = createPlayer(player1Name,"X", 0);
-  const player2 = createPlayer(player2Name,"O", 0);
+    constructor(name, symbol) {
+      this.name = name; 
+      this.symbol = symbol; 
+    }
+
+    getScore() {
+      return this.#score;
+    }
+
+    addPoint() {
+      this.#score++;
+    }
+
+    resetScore() {
+      this.#score = 0;
+    }
+
+    changePlayerName(newName){
+      this.name = newName;
+    }
+
+  }
+
+  const player1 = new Player(player1Name, "X");
+  const player2 = new Player(player2Name,"O");
+
 
   const players = [player1, player2];
 
-  //Who is the active Player of the round
-  let activePlayer = players[0]; //By default, it's Player1
+  let activePlayer = players[0];
+  const getActivePlayer = () => activePlayer;
 
-  //Then switch turn
+ 
   const switchPlayerTurn = () => {
     activePlayer = activePlayer === players[0] ? players[1] : players[0];
-    //If activePlayer = activePlayer (is that equal to players[O]?)
-    //If yes (activePlayer = players[0]), activePlayer is equal to Players[1]
-    //If no (activePlayer = players[1]), activePlayer is equal to Players[0]
   };
 
-  //Get the ActivePlayer from the outside of the function
-  const getActivePlayer = () => activePlayer;
 
   const printNewRound = () => {
     Gameboard.printBoard();
     console.log(`${getActivePlayer().name}'s turn.`);
+  };
+
+  function resetScores() {
+    player1.resetScore();
+    player2.resetScore();
+  }
+
+  const changePlayerName = (index, newName) => {
+    if (index === 0 || index === 1) {
+      players[index].changePlayerName(newName);
+    }
   };
 
   const checkVictory = () => {
@@ -93,13 +111,15 @@ const GameController = (player1Name = "Player One", player2Name = "Player Two") 
   
     for (let combination of winningCombinations) {
       const [a, b, c] = combination;
-      if (Gameboard.getBoard()[a] !== "" && Gameboard.getBoard()[a] === Gameboard.getBoard()[b] && Gameboard.getBoard()[b] === Gameboard.getBoard()[c]) {
-        // console.log(`${getActivePlayer().name} wins !`);
-        return true; // Return if win
+      if (Gameboard.getBoard()[a] !== "" && 
+          Gameboard.getBoard()[a] === Gameboard.getBoard()[b] && 
+          Gameboard.getBoard()[b] === Gameboard.getBoard()[c]) {
+        return true;
       }
     }
-    return false; // No victory
+    return false;
   };
+
 
   const checkDraw = () => {
     let count = 0;
@@ -108,7 +128,6 @@ const GameController = (player1Name = "Player One", player2Name = "Player Two") 
         count = count + 1;
       }
       if (count === 9){ 
-        // console.log(`It's a draw !`);
         return true;}
     }
     return false; 
@@ -130,23 +149,10 @@ const GameController = (player1Name = "Player One", player2Name = "Player Two") 
     return false;
   };
 
-  const changePlayerName = (index, newName) => {
-    if (index=== 0 || index === 1) {
-      players[index].name = newName; 
-    }
-  };
-
-  function increaseScore(winner) {
-    winner.score++;
-  }
-
-  function resetScores() {
-    players.forEach(player => player.score = 0);
-  }
 
   const playRound = (index) => {
     console.log(`Dropping ${getActivePlayer().name}'s token into position ${index}....`); //CONSOLE
-    Gameboard.putMarker(index, getActivePlayer().symbole);
+    Gameboard.putMarker(index, getActivePlayer().symbol);
     Gameboard.printBoard(); // CONSOLE
     if(checkVictory()) {
       return;
@@ -162,17 +168,17 @@ const GameController = (player1Name = "Player One", player2Name = "Player Two") 
 
   //Display for the console 
   const printPlayers = () => {
-    console.log(`${player1.name} plays with ${player1.symbole}`);
-    console.log(`${player2.name} plays with ${player2.symbole}`);
+    console.log(`${player1.name} plays with ${player1.symbol}`);
+    console.log(`${player2.name} plays with ${player2.symbol}`);
     console.log(`The active player is ${getActivePlayer().name}`);
   };
 
-  return {checkVictory, checkDraw, highlightVictory, increaseScore, resetScores, getActivePlayer, changePlayerName, playRound, players, printPlayers};
+  return {resetScores, changePlayerName, checkVictory, checkDraw, highlightVictory, getActivePlayer, playRound, players, printPlayers};
 };
 
 
 
-//Display the UI without modifying the Gameboard()
+
 const displayController = (function () {
     const game = GameController();
     const status = document.querySelector(".status");
@@ -246,52 +252,40 @@ const displayController = (function () {
       Gameboard.getBoard().forEach((cell, index) => {
         const cellDiv = document.createElement("div");
         cellDiv.classList.add("cell");
-        cellDiv.dataset.index = index; //Store the index in each cell for click event
-        
+        cellDiv.dataset.index = index; //Store the index in each cell for click event   
         cellDiv.textContent = cell; 
-
         cellDiv.dataset.sym = cell; //Store the symbol of each cell for CSS
-
         cellDiv.addEventListener("click",putMarkerClick);
-
         boardContainer.appendChild(cellDiv);
       });
-
       player1Display.textContent = game.players[0].name;
       player2Display.textContent = game.players[1].name;
-
     }
 
 
-    //Event on click to put Marker
     function putMarkerClick(event) {
       const index = event.target.dataset.index; //Retrieve the dataset-index the cell
-
       if (Gameboard.getBoard()[index] !=="") return;
-
-      game.playRound(index);
-      updateDisplay();
+        game.playRound(index);
+        updateDisplay();
     }
 
     function updateDisplay() {
-
       const cells = document.querySelectorAll(".cell");
-
       cells.forEach((cell, index) => {
         cell.textContent = Gameboard.getBoard()[index];
         cell.dataset.sym = cell.textContent;
         cell.classList.toggle("taken", Gameboard.getBoard()[index] !== "");
         cell.classList.remove("victory");
-
       });
 
       function updateScoreUI() {
-        document.getElementById("score1").textContent = game.players[0].score;
-        document.getElementById("score2").textContent = game.players[1].score;
+        document.getElementById("score1").textContent = game.players[0].getScore(); //FUNCTION CLASS (Get Score)
+        document.getElementById("score2").textContent = game.players[1].getScore(); //FUNCTION CLASS (Get Score)
       }
 
       if (game.checkVictory()) {
-        game.increaseScore(game.getActivePlayer());
+        game.getActivePlayer().addPoint(); //FUNCTION CLASS (Add point)
         updateScoreUI();
         console.log(`${game.getActivePlayer().name} wins !`);
         status.textContent = `${game.getActivePlayer().name} wins ! 🎉`;
@@ -318,9 +312,9 @@ const displayController = (function () {
 
     // Reset the game
     resetButton.addEventListener("click", () => {
-      game.resetScores();
-      game.changePlayerName(0, "Player One"); // Reset Names in Game Controller
-      game.changePlayerName(1, "Player Two"); // Reset Names in Game Controller
+      game.resetScores(); //FUNCTION CLASS (Reset Scores)
+      game.players[0].changePlayerName("Player One"); // Reset Names in Game Controller
+      game.players[1].changePlayerName("Player Two");// Reset Names in Game Controller
       player1Display.textContent = game.players[0].name; // Update in the DOM
       player2Display.textContent = game.players[1].name; // Update in the DOM
       document.getElementById("score1").textContent = 0;
