@@ -47,14 +47,23 @@ const GameController = (player1Name = "Player One", player2Name = "Player Two") 
 //CLASS PLAYER
   class Player {
     #score = 0;
+    _name; 
 
     constructor(name, symbol) {
       this.name = name; 
       this.symbol = symbol; 
     }
 
-    getScore() {
+    get score() { //GET
       return this.#score;
+    }
+
+    set score(value) { //SET (like a filter ?)
+      if (value < 0) {
+        console.log("Score can't be negative");
+        return;
+      }
+      this.#score = value;
     }
 
     addPoint() {
@@ -63,6 +72,18 @@ const GameController = (player1Name = "Player One", player2Name = "Player Two") 
 
     resetScore() {
       this.#score = 0;
+    }
+
+    get name() {
+      return this._name; 
+    }
+
+    set name(newName) {
+      if (!newName.trim()) {
+        console.log("Error : empty name!");
+        return;
+      }
+      this._name = newName.trim();
     }
 
     changePlayerName(newName){
@@ -280,8 +301,8 @@ const displayController = (function () {
       });
 
       function updateScoreUI() {
-        document.getElementById("score1").textContent = game.players[0].getScore(); //FUNCTION CLASS (Get Score)
-        document.getElementById("score2").textContent = game.players[1].getScore(); //FUNCTION CLASS (Get Score)
+        document.getElementById("score1").textContent = game.players[0].score; //FUNCTION CLASS (Get Score)
+        document.getElementById("score2").textContent = game.players[1].score; //FUNCTION CLASS (Get Score)
       }
 
       if (game.checkVictory()) {
